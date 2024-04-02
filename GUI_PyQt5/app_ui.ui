@@ -122,10 +122,10 @@ QPushButton:hover {
     <widget class="QPushButton" name="stop_pushButton">
      <property name="geometry">
       <rect>
-       <x>70</x>
+       <x>30</x>
        <y>280</y>
-       <width>151</width>
-       <height>61</height>
+       <width>111</width>
+       <height>51</height>
       </rect>
      </property>
      <property name="font">
@@ -179,6 +179,37 @@ QPushButton:hover {
      </property>
      <property name="text">
       <string>Video</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="clear_pushButton">
+     <property name="geometry">
+      <rect>
+       <x>150</x>
+       <y>280</y>
+       <width>111</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Times New Roman</family>
+       <pointsize>16</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+    background-color: rgb(255, 255, 255);
+    border-radius: 10px;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+QPushButton:hover {
+       background-color: rgb(209, 209, 209);
+}
+</string>
+     </property>
+     <property name="text">
+      <string>Clear</string>
      </property>
     </widget>
    </widget>
@@ -259,6 +290,12 @@ border: 2px solid blue;</string>
        <width>271</width>
        <height>251</height>
       </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Times New Roman</family>
+       <pointsize>12</pointsize>
+      </font>
      </property>
     </widget>
    </widget>

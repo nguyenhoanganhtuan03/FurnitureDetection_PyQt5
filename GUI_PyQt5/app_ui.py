@@ -71,7 +71,7 @@ class Ui_MainWindow(object):
         self.label_2.setAlignment(QtCore.Qt.AlignCenter)
         self.label_2.setObjectName("label_2")
         self.stop_pushButton = QtWidgets.QPushButton(self.widget)
-        self.stop_pushButton.setGeometry(QtCore.QRect(70, 280, 151, 61))
+        self.stop_pushButton.setGeometry(QtCore.QRect(30, 280, 111, 51))
         font = QtGui.QFont()
         font.setFamily("Times New Roman")
         font.setPointSize(16)
@@ -104,6 +104,23 @@ class Ui_MainWindow(object):
 "}\n"
 "")
         self.video_pushButton.setObjectName("video_pushButton")
+        self.clear_pushButton = QtWidgets.QPushButton(self.widget)
+        self.clear_pushButton.setGeometry(QtCore.QRect(150, 280, 111, 51))
+        font = QtGui.QFont()
+        font.setFamily("Times New Roman")
+        font.setPointSize(16)
+        self.clear_pushButton.setFont(font)
+        self.clear_pushButton.setStyleSheet("QPushButton {\n"
+"    background-color: rgb(255, 255, 255);\n"
+"    border-radius: 10px;\n"
+"    transition: background-color 0.3s, transform 0.3s;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"       background-color: rgb(209, 209, 209);\n"
+"}\n"
+"")
+        self.clear_pushButton.setObjectName("clear_pushButton")
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setGeometry(QtCore.QRect(6, 3, 1591, 161))
         font = QtGui.QFont()
@@ -135,6 +152,10 @@ class Ui_MainWindow(object):
         self.label_3.setObjectName("label_3")
         self.ttin_textEdit = QtWidgets.QTextEdit(self.widget_3)
         self.ttin_textEdit.setGeometry(QtCore.QRect(10, 60, 271, 251))
+        font = QtGui.QFont()
+        font.setFamily("Times New Roman")
+        font.setPointSize(12)
+        self.ttin_textEdit.setFont(font)
         self.ttin_textEdit.setObjectName("ttin_textEdit")
         self.widget_4 = QtWidgets.QWidget(self.centralwidget)
         self.widget_4.setGeometry(QtCore.QRect(1300, 170, 291, 341))
@@ -234,6 +255,7 @@ class Ui_MainWindow(object):
         self.label_2.setText(_translate("MainWindow", "Upload"))
         self.stop_pushButton.setText(_translate("MainWindow", "Stop"))
         self.video_pushButton.setText(_translate("MainWindow", "Video"))
+        self.clear_pushButton.setText(_translate("MainWindow", "Clear"))
         self.label.setText(_translate("MainWindow", "Hệ thống nhận dạng và gợi ý nội thất phòng khách"))
         self.label_3.setText(_translate("MainWindow", "Thông tin File"))
         self.label_4.setText(_translate("MainWindow", "Nhận dạng"))
