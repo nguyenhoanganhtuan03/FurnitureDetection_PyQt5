@@ -14,32 +14,32 @@ from GUI_PyQt5.app_ui import Ui_MainWindow  # Import your generated UI module
 class capture_video(QThread):
     signal = pyqtSignal(np.ndarray)
 
-    def __init__(self, ui_main_window):
-        self.ui_main_window = ui_main_window
-        super(capture_video, self).__init__()
+    def __init__(self, file_path):
+        self.file_path = file_path
+        self.cap = None  # Khởi tạo biến cap
+        super().__init__()
 
     def run(self):
         try:
-            file_name = self.ui_main_window.video_or_camera()
-            if file_name:
-                cap = cv2.VideoCapture(file_name)
-                if not cap.isOpened():
-                    raise Exception("Video file could not be opened")
-
-                self.is_running = True
-                while self.is_running:
-                    ret, cv_img = cap.read()
-                    if ret:
-                        self.signal.emit(cv_img)
-                    else:
-                        break
-            else:
-                raise Exception("No file selected")
+            if self.file_path is not None:  # Kiểm tra nếu file_path không phải là None
+                self.cap = cv2.VideoCapture(self.file_path)
+            else:  # Trường hợp sử dụng camera
+                self.cap = cv2.VideoCapture(0)  # Sử dụng camera với index 0
+                if not self.cap.isOpened():  # Kiểm tra xem camera có được mở hay không
+                    raise Exception("Camera could not be opened")
+            while True:
+                ret, cv_img = self.cap.read()
+                if ret:
+                    self.signal.emit(cv_img)
+                else:
+                    break
         except Exception as e:
             print("Error in video capture thread:", e)
+        finally:
+            if self.cap is not None:
+                self.cap.release()  # Giải phóng camera
 
     def stop(self):
-        self.is_running = False
         self.terminate()
 
 
@@ -49,39 +49,47 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.selected_image_file = ""
+        self.thread = None  # Khởi tạo thread
 
         self.ui.ha_pushButton.clicked.connect(self.original_image)
         self.ui.ha_pushButton.clicked.connect(self.file_info)
         self.ui.video_pushButton.clicked.connect(self.start_capture_video)
-        self.ui.video_pushButton.clicked.connect(self.file_info)
-        self.ui.camera_pushButton.clicked.connect(self.start_capture_video)
+        self.ui.camera_pushButton.clicked.connect(self.start_capture_camera)
         self.ui.stop_pushButton.clicked.connect(self.stop_capture_video)
         self.ui.clear_pushButton.clicked.connect(self.clear_ui)
-
-        self.thread = {}
 
     def closeEvent(self, event):
         self.stop_capture_video()
 
     def stop_capture_video(self):
         try:
-            if 1 in self.thread:
-                self.thread[1].stop()
-                self.thread[1].wait()
+            if self.thread:  # Kiểm tra xem thread đã được khởi tạo chưa
+                self.thread.stop()  # Dừng thread
+                self.thread.wait()  # Chờ thread kết thúc
                 self.ui.original_label.clear()
+                self.thread = None  # Đặt lại thread thành None
         except Exception as e:
             print("Error stopping video capture thread:", e)
 
     def start_capture_video(self):
         try:
-            if 1 in self.thread:
-                QMessageBox.warning(self, "Warning", "Video capture is already running.")
-                return
-            self.thread[1] = capture_video(self)
-            self.thread[1].start()
-            self.thread[1].signal.connect(self.show_webcam)
+            if not self.thread:
+                file_path = self.video_or_camera()
+                if file_path:
+                    self.thread = capture_video(file_path)
+                    self.thread.start()
+                    self.thread.signal.connect(self.show_webcam)
         except Exception as e:
             print("Error starting video capture thread:", e)
+
+    def start_capture_camera(self):
+        try:
+            if not self.thread:
+                self.thread = capture_video(None)  # Truyền None cho đường dẫn camera
+                self.thread.start()
+                self.thread.signal.connect(self.show_webcam)
+        except Exception as e:
+            print("Error starting camera capture thread:", e)
 
     def show_webcam(self, cv_img):
         try:
@@ -109,7 +117,7 @@ class MainWindow(QMainWindow):
             self.selected_image_file = file_name
             return self.selected_image_file
         else:
-            return 0
+            return None
 
     def original_image(self):
         options = QFileDialog.Options()
@@ -139,23 +147,51 @@ class MainWindow(QMainWindow):
                 file_size_kb = file_size / 1024
                 file_type = file_info.suffix()
 
-                info_text = "\n"
-                info_text += f"File Name: {file_name}\n"
-                info_text += f"File Path: {file_path}\n"
-                info_text += f"File Size: {file_size_kb:.2f} KB\n"
-                info_text += f"File Type: {file_type.upper()}\n"
+                if file_type.lower() in ['.mp4', '.avi']:
+                    cap = cv2.VideoCapture(self.selected_image_file)
+                    if not cap.isOpened():
+                        QMessageBox.warning(self, "Warning", "Cannot open video file.")
+                        return
 
-                self.ui.ttin_textEdit.setText(info_text)
+                    # Đọc thông tin video
+                    frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+                    fps = int(cap.get(cv2.CAP_PROP_FPS))
+                    width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+                    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
+                    info_text = "\n"
+                    info_text += f"File Name: {file_name}\n"
+                    info_text += f"File Path: {file_path}\n"
+                    info_text += f"File Size: {file_size_kb:.2f} KB\n"
+                    info_text += f"File Type: {file_type.upper()}\n"
+                    info_text += f"Frame Count: {frame_count}\n"
+                    info_text += f"FPS: {fps}\n"
+                    info_text += f"Width: {width}\n"
+                    info_text += f"Height: {height}\n"
+
+                    self.ui.ttin_textEdit.setText(info_text)
+                    print(fps)
+
+                    cap.release()  # Giải phóng tài nguyên video
+                else:
+                    info_text = "\n"
+                    info_text += f"File Name: {file_name}\n"
+                    info_text += f"File Path: {file_path}\n"
+                    info_text += f"File Size: {file_size_kb:.2f} KB\n"
+                    info_text += f"File Type: {file_type.upper()}\n"
+
+                    self.ui.ttin_textEdit.setText(info_text)
             except Exception as e:
-                print("Error:", e)
+                print("Error in file_info:", e)
                 QMessageBox.warning(self, "Warning", "An error occurred while processing the file.")
         else:
-            QMessageBox.warning(self, "Warning", "No image selected.")
+            QMessageBox.warning(self, "Warning", "No file selected.")
 
     def clear_ui(self):
-        # Xóa toàn bộ dữ liệu trên giao diện người dùng
+        self.stop_capture_video()
         self.ui.original_label.clear()
         self.ui.ttin_textEdit.clear()
+        self.selected_image_file=''
 
 
 if __name__ == "__main__":
@@ -163,4 +199,3 @@ if __name__ == "__main__":
     main_win = MainWindow()
     main_win.show()
     sys.exit(app.exec())
-
