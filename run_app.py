@@ -47,6 +47,7 @@ class CaptureVideo(QThread):
                     # Xử lý kết quả
                     max_confidence = 0.3
                     best_boxes = []
+                    detected_objects = []  # Danh sách các vật thể được phát hiện
 
                     for r in results:
                         boxes = r.boxes
@@ -54,10 +55,11 @@ class CaptureVideo(QThread):
                         for box in boxes:
                             confidence = box.conf[0]
                             cls = int(box.cls[0])
-                            if self.classNames[cls] in ['book', 'clock', 'curtain', 'painting', 'vase', 'tv'] and confidence > max_confidence:
+                            if self.classNames[cls] in ['book', 'clock', 'curtain', 'painting', 'vase',
+                                                        'tv'] and confidence > max_confidence:
                                 max_confidence = confidence
                                 best_boxes.append(box)
-                                detected_objects.append(self.classNames[cls])
+                                detected_objects.append(self.classNames[cls])  # Lưu tên vật thể
 
                     # Vẽ bounding box cho các hộp tốt nhất (nếu có)
                     for best_box in best_boxes:
@@ -104,7 +106,6 @@ class MainWindow(QMainWindow):
         # Kết nối các sự kiện với các hàm tương ứng
         self.ui.ha_pushButton.clicked.connect(self.original_image)
         self.ui.ha_pushButton.clicked.connect(self.file_info)
-        self.ui.ha_pushButton.clicked.connect(self.load_image)
         self.ui.video_pushButton.clicked.connect(self.start_capture_video)
         self.ui.video_pushButton.clicked.connect(self.file_info)
         self.ui.camera_pushButton.clicked.connect(self.start_capture_camera)
@@ -183,18 +184,22 @@ class MainWindow(QMainWindow):
     def original_image(self):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        file_name, _ = QFileDialog.getOpenFileName(self, "Chọn hình ảnh", "","Tệp hình ảnh (*.png *.jpg *.jpeg *.bmp)", options=options)
+        detected_objects = []
+        file_name, _ = QFileDialog.getOpenFileName(self, "Chọn hình ảnh", "", "Tệp hình ảnh (*.png *.jpg *.jpeg *.bmp)",
+                                                   options=options)
         if file_name:
             self.selected_image_file = file_name
             try:
                 cv_img = cv2.imread(file_name)
-                if cv_img is not None:
-                    qt_img = self.convert_cv_qt(cv_img)
-                    self.ui.original_label.setPixmap(qt_img)
-                else:
-                    QMessageBox.warning(self, "Cảnh báo", "Tệp đã chọn không phải là hình ảnh hợp lệ.")
+                qt_img = self.convert_cv_qt(cv_img)
+                results = self.model(file_name, conf=0.3, imgsz=640)
+                for obj in results:
+                    detected_objects.append(obj['label'])
+
+                self.ui.original_label.setPixmap(qt_img)
+                self.ph_nt_textEdit.setText("\n ".join(detected_objects))
             except Exception as e:
-                print("Lỗi khi tải hình ảnh:", e)
+                QMessageBox.warning(self, "Cảnh báo", f"Đã xảy ra lỗi khi xử lý hình ảnh: {str(e)}")
         else:
             QMessageBox.warning(self, "Cảnh báo", "Không có hình ảnh nào được chọn.")
 
@@ -252,20 +257,6 @@ class MainWindow(QMainWindow):
         self.ui.original_label.clear()
         self.ui.ttin_textEdit.clear()
         self.selected_image_file=''
-
-    # Tải hình ảnh và phát hiện vật thể
-    def load_image(self):
-        detected_objects = []
-        try:
-            if self.selected_image_file:
-                img = cv2.imread(self.selected_image_file)
-                if img is not None:
-                    results = self.model(img, conf=0.3, imgsz = 640)
-                    for obj in results:
-                        detected_objects.append(obj['label'])
-        except Exception as e:
-            QMessageBox.warning(self, "Cảnh báo", "Đã xảy ra lỗi khi tải mô hình.")
-        self.ph_nt_textEdit.setText(detected_objects)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
