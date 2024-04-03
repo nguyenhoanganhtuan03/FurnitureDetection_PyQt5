@@ -6,9 +6,9 @@ import math
 # train 1869 1435  1925    2401     1249 4337 = 13216
 # val   551  348   201     160      261  403 = 1924
 
-# # Model
-# model = YOLO("Project_1/runs/detect/train/weights/best.pt")  # Tạo mô hình YOLO với trọng số tốt nhất
-# results = model("D:/PyCharm/Python/Computer_Vision/Advance/Project_1/test/test_img", save=True, conf=0.5)
+# Model
+model = YOLO("D:/PyCharm/NLCS_Model_PyQt5/Model_Yolo/src_code/runs/detect/train/weights/best.pt")  # Tạo mô hình YOLO với trọng số tốt nhất
+results = model("D:/PyCharm/NLCS_Model_PyQt5/Imgs_Test", save=True, conf=0.5)
 
 # ==============================Camera==============================
 # # Object classes
@@ -69,10 +69,10 @@ import math
 
 
 # ==============================Video==============================
-# Model
-model = YOLO("runs/detect/train/weights/best.pt")  # Tạo mô hình YOLO với trọng số tốt nhất
-results = model("D:/PyCharm/Python/Computer_Vision/Advance/Project_1/test/test_video", save=True, conf=0.5, vid_stride=3, save_frames=True, save_crop=True)
-for r in results:
-    boxes = r.boxes  # Boxes object for bbox outputs
-    masks = r.masks  # Masks object for segment masks outputs
-    probs = r.probs  # Class probabilities for classification outputs
+# # Model
+# model = YOLO("runs/detect/train/weights/best.pt")  # Tạo mô hình YOLO với trọng số tốt nhất
+# results = model("D:/PyCharm/Python/Computer_Vision/Advance/Project_1/test/test_video", save=True, conf=0.5, vid_stride=3, save_frames=True, save_crop=True)
+# for r in results:
+#     boxes = r.boxes  # Boxes object for bbox outputs
+#     masks = r.masks  # Masks object for segment masks outputs
+#     probs = r.probs  # Class probabilities for classification outputs

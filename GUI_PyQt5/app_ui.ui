@@ -285,10 +285,10 @@ border: 2px solid blue;</string>
     <widget class="QTextEdit" name="ttin_textEdit">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>20</x>
        <y>60</y>
-       <width>271</width>
-       <height>251</height>
+       <width>251</width>
+       <height>241</height>
       </rect>
      </property>
      <property name="font">
@@ -296,6 +296,9 @@ border: 2px solid blue;</string>
        <family>Times New Roman</family>
        <pointsize>12</pointsize>
       </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">border-radius:0px</string>
      </property>
     </widget>
    </widget>
@@ -344,11 +347,15 @@ border: 2px solid blue;</string>
     <widget class="QTextEdit" name="ph_nt_textEdit">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>20</x>
        <y>60</y>
-       <width>271</width>
-       <height>271</height>
+       <width>251</width>
+       <height>261</height>
       </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">border-radius:0px
+</string>
      </property>
     </widget>
    </widget>
@@ -402,11 +409,15 @@ QPushButton:hover {
     <widget class="QTextEdit" name="gy_nt_textEdit">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>20</x>
        <y>70</y>
-       <width>271</width>
-       <height>251</height>
+       <width>251</width>
+       <height>241</height>
       </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">border-radius:0px
+</string>
      </property>
     </widget>
    </widget>
