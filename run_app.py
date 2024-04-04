@@ -20,18 +20,21 @@ from PyQt5.QtCore import QThread, pyqtSignal
 
 class CaptureVideo(QThread):
     signal = pyqtSignal(np.ndarray)
-    finished_signal = pyqtSignal()  # Thêm tín hiệu để thông báo khi video kết thúc
+    finished_signal = pyqtSignal(list)
 
-    def __init__(self, file_path):
+    def __init__(self, file_path, main_window):
         self.file_path = file_path
         self.cap = None
         self.model = YOLO("Model_Yolo/src_code/runs/detect/train/weights/best.pt")
         self.classNames = ['book', 'clock', 'curtain', 'painting', 'vase', 'tv']
+        self.class_name_map = {'book': 'Sách', 'clock': 'Đồng hồ', 'curtain': 'Rèm', 'painting': 'Bức tranh', 'vase': 'Bình hoa', 'tv': 'TV'}
+        self.main_window = main_window
+        self.keep_running = True
         super().__init__()
 
-    # Hàm run để bắt đầu chụp video
     def run(self):
         detected_objects = []
+
         try:
             if self.file_path is not None:
                 self.cap = cv2.VideoCapture(self.file_path)
@@ -39,53 +42,45 @@ class CaptureVideo(QThread):
                 self.cap = cv2.VideoCapture(0)
                 if not self.cap.isOpened():
                     raise Exception("Không thể mở camera")
-            while True:
+
+            while True and self.keep_running:  # Thêm điều kiện để kiểm tra biến cờ
                 ret, img = self.cap.read()
                 if ret:
                     results = self.model(img, stream=True)
-
-                    # Xử lý kết quả
                     best_boxes = []
-                    detected_objects = []  # Danh sách các vật thể được phát hiện
 
                     for r in results:
                         boxes = r.boxes
-
                         for box in boxes:
                             confidence = box.conf[0]
                             cls = int(box.cls[0])
                             if self.classNames[cls] in ['book', 'clock', 'curtain', 'painting', 'vase', 'tv']:
                                 best_boxes.append(box)
-                                detected_objects.append(self.classNames[cls])  # Lưu tên vật thể
+                                detected_objects.append(self.classNames[cls])
 
-                    # Vẽ bounding box cho các hộp tốt nhất (nếu có)
-                    for best_box in best_boxes:
-                        x1, y1, x2, y2 = best_box.xyxy[0]
-                        x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
+                        for best_box in best_boxes:
+                            x1, y1, x2, y2 = best_box.xyxy[0]
+                            x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
+                            cv2.rectangle(img, (x1, y1), (x2, y2), (255, 0, 255), 3)
+                            cls = int(best_box.cls[0])
+                            org = [x1, y1]
+                            font = cv2.FONT_HERSHEY_SIMPLEX
+                            fontScale = 1
+                            color = (255, 0, 0)
+                            thickness = 2
+                            cv2.putText(img, self.classNames[cls], org, font, fontScale, color, thickness)
 
-                        # Vẽ bounding box
-                        cv2.rectangle(img, (x1, y1), (x2, y2), (255, 0, 255), 3)
-
-                        # Tên lớp
-                        cls = int(best_box.cls[0])
-
-                        # Chi tiết vật thể
-                        org = [x1, y1]
-                        font = cv2.FONT_HERSHEY_SIMPLEX
-                        fontScale = 1
-                        color = (255, 0, 0)
-                        thickness = 2
-
-                        cv2.putText(img, self.classNames[cls], org, font, fontScale, color, thickness)
                     self.signal.emit(img)
                 else:
                     break
-            self.finished_signal.emit()  # Gửi tín hiệu khi video kết thúc
         except Exception as e:
             print("Lỗi trong luồng chụp video:", e)
+        finally:
+            if self.keep_running:
+                self.finished_signal.emit(detected_objects)
 
-    # Hàm stop để dừng chụp video
     def stop(self):
+        # self.keep_running = False
         self.terminate()
 
 
@@ -99,6 +94,7 @@ class MainWindow(QMainWindow):
         self.thread = None
         self.model = YOLO("Model_Yolo/src_code/runs/detect/train/weights/best.pt")
         self.classNames = ['book', 'clock', 'curtain', 'painting', 'vase', 'tv']
+        self.class_name_map = {'book': 'Sách', 'clock': 'Đồng hồ', 'curtain': 'Rèm', 'painting': 'Bức tranh', 'vase': 'Bình hoa', 'tv': 'TV'}
 
         # Kết nối các sự kiện với các hàm tương ứng
         self.ui.ha_pushButton.clicked.connect(self.original_image)
@@ -119,7 +115,7 @@ class MainWindow(QMainWindow):
             if self.thread:
                 self.thread.stop()
                 self.thread.wait()
-                self.ui.original_label.clear()
+                # self.ui.original_label.clear()
                 self.thread = None
         except Exception as e:
             print("Lỗi khi dừng luồng chụp video:", e)
@@ -130,9 +126,10 @@ class MainWindow(QMainWindow):
             if not self.thread:
                 file_path = self.video_or_camera()
                 if file_path:
-                    self.thread = CaptureVideo(file_path)
+                    self.thread = CaptureVideo(file_path, self)
                     self.thread.start()
                     self.thread.signal.connect(self.show_webcam)
+                    self.thread.finished_signal.connect(self.update_detected_objects_camera_video)
         except Exception as e:
             print("Lỗi khi bắt đầu luồng chụp video:", e)
 
@@ -140,9 +137,10 @@ class MainWindow(QMainWindow):
     def start_capture_camera(self):
         try:
             if not self.thread:
-                self.thread = CaptureVideo(None)
+                self.thread = CaptureVideo(None, self)
                 self.thread.start()
                 self.thread.signal.connect(self.show_webcam)
+                self.thread.finished_signal.connect(self.update_detected_objects_camera_video)
         except Exception as e:
             print("Lỗi khi bắt đầu luồng chụp camera:", e)
 
@@ -177,60 +175,59 @@ class MainWindow(QMainWindow):
         else:
             return None
 
+    def update_detected_objects_camera_video(self, detected_objects):
+        translated_objects = [self.class_name_map.get(obj, obj) for obj in detected_objects]
+        unique_objects = set(translated_objects)
+        detected_objects_str = '\n'.join(unique_objects)
+        self.ui.ph_nt_textEdit.setPlainText(detected_objects_str)
+
+    def update_detected_objects_images(self, detected_objects):
+        translated_objects = [self.class_name_map.get(obj, obj) for obj in detected_objects]
+        object_counts = {}
+        for obj in translated_objects:
+            object_counts[obj] = object_counts.get(obj, 0) + 1
+        detected_objects_str = ""
+        for obj, count in object_counts.items():
+            detected_objects_str += f"{obj}: {count}\n"
+        self.ui.ph_nt_textEdit.setPlainText(detected_objects_str)
+
     # Chọn hình ảnh từ máy tính
     def original_image(self):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        detected_objects = []
-        file_name, _ = QFileDialog.getOpenFileName(self, "Chọn hình ảnh", "", "Tệp hình ảnh (*.png *.jpg *.jpeg *.bmp)",
-                                                   options=options)
+        file_name, _ = QFileDialog.getOpenFileName(self, "Chọn hình ảnh", "", "Tệp hình ảnh (*.png *.jpg *.jpeg *.bmp)", options=options)
         if file_name:
-                self.selected_image_file = file_name
-
-            # try:
-                cv_img = cv2.imread(file_name)
-                results = self.model(cv_img, conf=0.3, imgsz = 640)
-
-                best_boxes = []
-                detected_objects = []
-
-                for r in results:
-                    boxes = r.boxes
-
-                    for box in boxes:
-                        confidence = box.conf[0]
-                        cls = int(box.cls[0])
-                        if self.classNames[cls] in ['book', 'clock', 'curtain', 'painting', 'vase', 'tv'] :
-                            # max_confidence = confidence
-                            best_boxes.append(box)
-                            detected_objects.append(self.classNames[cls])  # Lưu tên vật thể
-
+            self.selected_image_file = file_name
+            cv_img = cv2.imread(file_name)
+            results = self.model(cv_img, conf=0.3, imgsz = 640)
+            best_boxes = []
+            detected_objects = []
+            for r in results:
+                boxes = r.boxes
+                for box in boxes:
+                    confidence = box.conf[0]
+                    cls = int(box.cls[0])
+                    if self.classNames[cls] in ['book', 'clock', 'curtain', 'painting', 'vase', 'tv'] :
+                        best_boxes.append(box)
+                        detected_objects.append(self.classNames[cls])
                 # Vẽ bounding box cho các hộp tốt nhất (nếu có)
                 for best_box in best_boxes:
                     x1, y1, x2, y2 = best_box.xyxy[0]
                     x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
-
                     # Vẽ bounding box
                     cv2.rectangle(cv_img, (x1, y1), (x2, y2), (255, 0, 255), 3)
-
                     # Tên lớp
                     cls = int(best_box.cls[0])
-
                     # Chi tiết vật thể
                     org = [x1, y1]
                     font = cv2.FONT_HERSHEY_SIMPLEX
                     fontScale = 1
                     color = (255, 0, 0)
                     thickness = 2
-
                     cv2.putText(cv_img, self.classNames[cls], org, font, fontScale, color, thickness)
                 qt_img = self.convert_cv_qt(cv_img)
-
                 self.ui.original_label.setPixmap(qt_img)
-                self.ui.ph_nt_textEdit.setText("\n ".join(detected_objects))
-            # except Exception as e:
-            #     print(f"Cảnh báo", f"Đã xảy ra lỗi khi xử lý hình ảnh: {str(e)}")
-            #     QMessageBox.warning(self, "Cảnh báo", f"Đã xảy ra lỗi khi xử lý hình ảnh: {str(e)}")
+                self.update_detected_objects_images(detected_objects)
         else:
             QMessageBox.warning(self, "Cảnh báo", "Không có hình ảnh nào được chọn.")
 
@@ -288,6 +285,7 @@ class MainWindow(QMainWindow):
         self.ui.original_label.clear()
         self.ui.ttin_textEdit.clear()
         self.selected_image_file=''
+        self.ui.ph_nt_textEdit.clear()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
