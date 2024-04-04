@@ -19,7 +19,8 @@ class Ui_MainWindow(object):
         self.centralwidget.setObjectName("centralwidget")
         self.widget = QtWidgets.QWidget(self.centralwidget)
         self.widget.setGeometry(QtCore.QRect(10, 170, 291, 351))
-        self.widget.setStyleSheet("background-color: rgb(87, 247, 255);\n"
+        self.widget.setStyleSheet("\n"
+"background-color: rgb(255, 255, 255);\n"
 "border-radius: 40px;\n"
 "border: 2px solid blue;\n"
 "")
@@ -37,7 +38,7 @@ class Ui_MainWindow(object):
 "}\n"
 "\n"
 "QPushButton:hover {\n"
-"       background-color: rgb(209, 209, 209);\n"
+"       background-color: rgb(149, 255, 110);\n"
 "}\n"
 "")
         self.ha_pushButton.setObjectName("ha_pushButton")
@@ -54,7 +55,7 @@ class Ui_MainWindow(object):
 "}\n"
 "\n"
 "QPushButton:hover {\n"
-"       background-color: rgb(209, 209, 209);\n"
+"       background-color: rgb(149, 255, 110);\n"
 "}\n"
 "")
         self.camera_pushButton.setObjectName("camera_pushButton")
@@ -83,7 +84,7 @@ class Ui_MainWindow(object):
 "}\n"
 "\n"
 "QPushButton:hover {\n"
-"       background-color: rgb(209, 209, 209);\n"
+"       background-color: rgb(149, 255, 110);\n"
 "}\n"
 "")
         self.stop_pushButton.setObjectName("stop_pushButton")
@@ -100,7 +101,7 @@ class Ui_MainWindow(object):
 "}\n"
 "\n"
 "QPushButton:hover {\n"
-"       background-color: rgb(209, 209, 209);\n"
+"       background-color: rgb(149, 255, 110);\n"
 "}\n"
 "")
         self.video_pushButton.setObjectName("video_pushButton")
@@ -117,7 +118,7 @@ class Ui_MainWindow(object):
 "}\n"
 "\n"
 "QPushButton:hover {\n"
-"       background-color: rgb(209, 209, 209);\n"
+"       background-color: rgb(149, 255, 110);\n"
 "}\n"
 "")
         self.clear_pushButton.setObjectName("clear_pushButton")
@@ -134,7 +135,7 @@ class Ui_MainWindow(object):
         self.label.setObjectName("label")
         self.widget_3 = QtWidgets.QWidget(self.centralwidget)
         self.widget_3.setGeometry(QtCore.QRect(10, 530, 291, 321))
-        self.widget_3.setStyleSheet("background-color: rgb(87, 247, 255);\n"
+        self.widget_3.setStyleSheet("background-color: rgb(255, 255, 255);\n"
 "border-radius: 40px;\n"
 "border: 2px solid blue;")
         self.widget_3.setObjectName("widget_3")
@@ -151,16 +152,18 @@ class Ui_MainWindow(object):
         self.label_3.setAlignment(QtCore.Qt.AlignCenter)
         self.label_3.setObjectName("label_3")
         self.ttin_textEdit = QtWidgets.QTextEdit(self.widget_3)
-        self.ttin_textEdit.setGeometry(QtCore.QRect(20, 60, 251, 241))
+        self.ttin_textEdit.setGeometry(QtCore.QRect(10, 60, 271, 241))
         font = QtGui.QFont()
         font.setFamily("Times New Roman")
         font.setPointSize(12)
         self.ttin_textEdit.setFont(font)
-        self.ttin_textEdit.setStyleSheet("border-radius:0px")
+        self.ttin_textEdit.setStyleSheet("border-radius:0px;\n"
+"border: none;\n"
+"background-color: rgb(255, 255, 255);")
         self.ttin_textEdit.setObjectName("ttin_textEdit")
         self.widget_4 = QtWidgets.QWidget(self.centralwidget)
         self.widget_4.setGeometry(QtCore.QRect(1300, 170, 291, 341))
-        self.widget_4.setStyleSheet("background-color: rgb(87, 247, 255);\n"
+        self.widget_4.setStyleSheet("background-color: rgb(255, 255, 255);\n"
 "border-radius: 40px;\n"
 "border: 2px solid blue;")
         self.widget_4.setObjectName("widget_4")
@@ -177,13 +180,18 @@ class Ui_MainWindow(object):
         self.label_4.setAlignment(QtCore.Qt.AlignCenter)
         self.label_4.setObjectName("label_4")
         self.ph_nt_textEdit = QtWidgets.QTextEdit(self.widget_4)
-        self.ph_nt_textEdit.setGeometry(QtCore.QRect(20, 60, 251, 261))
-        self.ph_nt_textEdit.setStyleSheet("border-radius:0px\n"
-"")
+        self.ph_nt_textEdit.setGeometry(QtCore.QRect(10, 60, 271, 261))
+        font = QtGui.QFont()
+        font.setFamily("Times New Roman")
+        font.setPointSize(14)
+        self.ph_nt_textEdit.setFont(font)
+        self.ph_nt_textEdit.setStyleSheet("border-radius:0px;\n"
+"border: none;\n"
+"background-color: rgb(255, 255, 255);")
         self.ph_nt_textEdit.setObjectName("ph_nt_textEdit")
         self.widget_5 = QtWidgets.QWidget(self.centralwidget)
         self.widget_5.setGeometry(QtCore.QRect(1300, 520, 291, 331))
-        self.widget_5.setStyleSheet("background-color: rgb(87, 247, 255);\n"
+        self.widget_5.setStyleSheet("background-color: rgb(255, 255, 255);\n"
 "border-radius: 40px;\n"
 "border: 2px solid blue;")
         self.widget_5.setObjectName("widget_5")
@@ -207,9 +215,10 @@ class Ui_MainWindow(object):
 "}")
         self.gy_nt_pushButton.setObjectName("gy_nt_pushButton")
         self.gy_nt_textEdit = QtWidgets.QTextEdit(self.widget_5)
-        self.gy_nt_textEdit.setGeometry(QtCore.QRect(20, 70, 251, 241))
-        self.gy_nt_textEdit.setStyleSheet("border-radius:0px\n"
-"")
+        self.gy_nt_textEdit.setGeometry(QtCore.QRect(10, 70, 271, 241))
+        self.gy_nt_textEdit.setStyleSheet("border-radius:0px;\n"
+"border: none;\n"
+"background-color: rgb(255, 255, 255);")
         self.gy_nt_textEdit.setObjectName("gy_nt_textEdit")
         self.tabWidget = QtWidgets.QTabWidget(self.centralwidget)
         self.tabWidget.setGeometry(QtCore.QRect(310, 170, 981, 681))
@@ -226,12 +235,36 @@ class Ui_MainWindow(object):
         self.tabWidget.addTab(self.tab, "")
         self.tab_2 = QtWidgets.QWidget()
         self.tab_2.setObjectName("tab_2")
-        self.reco_label = QtWidgets.QLabel(self.tab_2)
-        self.reco_label.setGeometry(QtCore.QRect(-10, -10, 991, 671))
-        self.reco_label.setStyleSheet("background-color: rgb(255, 255, 255);\n"
+        self.chat_bot_textEdit = QtWidgets.QTextEdit(self.tab_2)
+        self.chat_bot_textEdit.setGeometry(QtCore.QRect(0, 0, 981, 561))
+        font = QtGui.QFont()
+        font.setFamily("Times New Roman")
+        font.setPointSize(28)
+        self.chat_bot_textEdit.setFont(font)
+        self.chat_bot_textEdit.setObjectName("chat_bot_textEdit")
+        self.enter_textEdit = QtWidgets.QTextEdit(self.tab_2)
+        self.enter_textEdit.setGeometry(QtCore.QRect(10, 570, 861, 71))
+        font = QtGui.QFont()
+        font.setFamily("Times New Roman")
+        font.setPointSize(20)
+        self.enter_textEdit.setFont(font)
+        self.enter_textEdit.setObjectName("enter_textEdit")
+        self.enter_pushButton = QtWidgets.QPushButton(self.tab_2)
+        self.enter_pushButton.setGeometry(QtCore.QRect(880, 570, 91, 71))
+        font = QtGui.QFont()
+        font.setFamily("Times New Roman")
+        font.setPointSize(16)
+        self.enter_pushButton.setFont(font)
+        self.enter_pushButton.setStyleSheet("QPushButton {\n"
+"    background-color: rgb(255, 255, 255);\n"
+"    transition: background-color 0.3s, transform 0.3s;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"       background-color: rgb(149, 255, 110);\n"
+"}\n"
 "")
-        self.reco_label.setText("")
-        self.reco_label.setObjectName("reco_label")
+        self.enter_pushButton.setObjectName("enter_pushButton")
         self.tabWidget.addTab(self.tab_2, "")
         self.label.raise_()
         self.widget.raise_()
@@ -265,8 +298,9 @@ class Ui_MainWindow(object):
         self.label_3.setText(_translate("MainWindow", "Thông tin File"))
         self.label_4.setText(_translate("MainWindow", "Nhận dạng"))
         self.gy_nt_pushButton.setText(_translate("MainWindow", "Gợi ý nội thất"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("MainWindow", "Original file"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("MainWindow", "Recognized file"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("MainWindow", "Recognized file"))
+        self.enter_pushButton.setText(_translate("MainWindow", "Enter"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("MainWindow", "Chat Bot"))
 
 
 if __name__ == "__main__":

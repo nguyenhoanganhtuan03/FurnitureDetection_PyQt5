@@ -24,7 +24,8 @@
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: rgb(87, 247, 255);
+     <string notr="true">
+background-color: rgb(255, 255, 255);
 border-radius: 40px;
 border: 2px solid blue;
 </string>
@@ -52,7 +53,7 @@ border: 2px solid blue;
 }
 
 QPushButton:hover {
-       background-color: rgb(209, 209, 209);
+       background-color: rgb(149, 255, 110);
 }
 </string>
      </property>
@@ -83,7 +84,7 @@ QPushButton:hover {
 }
 
 QPushButton:hover {
-       background-color: rgb(209, 209, 209);
+       background-color: rgb(149, 255, 110);
 }
 </string>
      </property>
@@ -142,7 +143,7 @@ QPushButton:hover {
 }
 
 QPushButton:hover {
-       background-color: rgb(209, 209, 209);
+       background-color: rgb(149, 255, 110);
 }
 </string>
      </property>
@@ -173,7 +174,7 @@ QPushButton:hover {
 }
 
 QPushButton:hover {
-       background-color: rgb(209, 209, 209);
+       background-color: rgb(149, 255, 110);
 }
 </string>
      </property>
@@ -204,7 +205,7 @@ QPushButton:hover {
 }
 
 QPushButton:hover {
-       background-color: rgb(209, 209, 209);
+       background-color: rgb(149, 255, 110);
 }
 </string>
      </property>
@@ -250,7 +251,7 @@ QPushButton:hover {
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: rgb(87, 247, 255);
+     <string notr="true">background-color: rgb(255, 255, 255);
 border-radius: 40px;
 border: 2px solid blue;</string>
     </property>
@@ -285,9 +286,9 @@ border: 2px solid blue;</string>
     <widget class="QTextEdit" name="ttin_textEdit">
      <property name="geometry">
       <rect>
-       <x>20</x>
+       <x>10</x>
        <y>60</y>
-       <width>251</width>
+       <width>271</width>
        <height>241</height>
       </rect>
      </property>
@@ -298,7 +299,9 @@ border: 2px solid blue;</string>
       </font>
      </property>
      <property name="styleSheet">
-      <string notr="true">border-radius:0px</string>
+      <string notr="true">border-radius:0px;
+border: none;
+background-color: rgb(255, 255, 255);</string>
      </property>
     </widget>
    </widget>
@@ -312,7 +315,7 @@ border: 2px solid blue;</string>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: rgb(87, 247, 255);
+     <string notr="true">background-color: rgb(255, 255, 255);
 border-radius: 40px;
 border: 2px solid blue;</string>
     </property>
@@ -347,15 +350,22 @@ border: 2px solid blue;</string>
     <widget class="QTextEdit" name="ph_nt_textEdit">
      <property name="geometry">
       <rect>
-       <x>20</x>
+       <x>10</x>
        <y>60</y>
-       <width>251</width>
+       <width>271</width>
        <height>261</height>
       </rect>
      </property>
+     <property name="font">
+      <font>
+       <family>Times New Roman</family>
+       <pointsize>14</pointsize>
+      </font>
+     </property>
      <property name="styleSheet">
-      <string notr="true">border-radius:0px
-</string>
+      <string notr="true">border-radius:0px;
+border: none;
+background-color: rgb(255, 255, 255);</string>
      </property>
     </widget>
    </widget>
@@ -369,7 +379,7 @@ border: 2px solid blue;</string>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: rgb(87, 247, 255);
+     <string notr="true">background-color: rgb(255, 255, 255);
 border-radius: 40px;
 border: 2px solid blue;</string>
     </property>
@@ -409,15 +419,16 @@ QPushButton:hover {
     <widget class="QTextEdit" name="gy_nt_textEdit">
      <property name="geometry">
       <rect>
-       <x>20</x>
+       <x>10</x>
        <y>70</y>
-       <width>251</width>
+       <width>271</width>
        <height>241</height>
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">border-radius:0px
-</string>
+      <string notr="true">border-radius:0px;
+border: none;
+background-color: rgb(255, 255, 255);</string>
      </property>
     </widget>
    </widget>
@@ -438,7 +449,7 @@ QPushButton:hover {
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
-      <string>Original file</string>
+      <string>Recognized file</string>
      </attribute>
      <widget class="QLabel" name="original_label">
       <property name="geometry">
@@ -460,23 +471,68 @@ QPushButton:hover {
     </widget>
     <widget class="QWidget" name="tab_2">
      <attribute name="title">
-      <string>Recognized file</string>
+      <string>Chat Bot</string>
      </attribute>
-     <widget class="QLabel" name="reco_label">
+     <widget class="QTextEdit" name="chat_bot_textEdit">
       <property name="geometry">
        <rect>
-        <x>-10</x>
-        <y>-10</y>
-        <width>991</width>
-        <height>671</height>
+        <x>0</x>
+        <y>0</y>
+        <width>981</width>
+        <height>561</height>
        </rect>
       </property>
+      <property name="font">
+       <font>
+        <family>Times New Roman</family>
+        <pointsize>28</pointsize>
+       </font>
+      </property>
+     </widget>
+     <widget class="QTextEdit" name="enter_textEdit">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>570</y>
+        <width>861</width>
+        <height>71</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Times New Roman</family>
+        <pointsize>20</pointsize>
+       </font>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="enter_pushButton">
+      <property name="geometry">
+       <rect>
+        <x>880</x>
+        <y>570</y>
+        <width>91</width>
+        <height>71</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Times New Roman</family>
+        <pointsize>16</pointsize>
+       </font>
+      </property>
       <property name="styleSheet">
-       <string notr="true">background-color: rgb(255, 255, 255);
+       <string notr="true">QPushButton {
+    background-color: rgb(255, 255, 255);
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+QPushButton:hover {
+       background-color: rgb(149, 255, 110);
+}
 </string>
       </property>
       <property name="text">
-       <string/>
+       <string>Enter</string>
       </property>
      </widget>
     </widget>
