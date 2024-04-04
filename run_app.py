@@ -45,7 +45,6 @@ class CaptureVideo(QThread):
                     results = self.model(img, stream=True)
 
                     # Xử lý kết quả
-                    max_confidence = 0.3
                     best_boxes = []
                     detected_objects = []  # Danh sách các vật thể được phát hiện
 
@@ -55,9 +54,7 @@ class CaptureVideo(QThread):
                         for box in boxes:
                             confidence = box.conf[0]
                             cls = int(box.cls[0])
-                            if self.classNames[cls] in ['book', 'clock', 'curtain', 'painting', 'vase',
-                                                        'tv'] and confidence > max_confidence:
-                                max_confidence = confidence
+                            if self.classNames[cls] in ['book', 'clock', 'curtain', 'painting', 'vase', 'tv']:
                                 best_boxes.append(box)
                                 detected_objects.append(self.classNames[cls])  # Lưu tên vật thể
 
@@ -188,18 +185,52 @@ class MainWindow(QMainWindow):
         file_name, _ = QFileDialog.getOpenFileName(self, "Chọn hình ảnh", "", "Tệp hình ảnh (*.png *.jpg *.jpeg *.bmp)",
                                                    options=options)
         if file_name:
-            self.selected_image_file = file_name
-            try:
+                self.selected_image_file = file_name
+
+            # try:
                 cv_img = cv2.imread(file_name)
+                results = self.model(cv_img, conf=0.3, imgsz = 640)
+
+                best_boxes = []
+                detected_objects = []
+
+                for r in results:
+                    boxes = r.boxes
+
+                    for box in boxes:
+                        confidence = box.conf[0]
+                        cls = int(box.cls[0])
+                        if self.classNames[cls] in ['book', 'clock', 'curtain', 'painting', 'vase', 'tv'] :
+                            # max_confidence = confidence
+                            best_boxes.append(box)
+                            detected_objects.append(self.classNames[cls])  # Lưu tên vật thể
+
+                # Vẽ bounding box cho các hộp tốt nhất (nếu có)
+                for best_box in best_boxes:
+                    x1, y1, x2, y2 = best_box.xyxy[0]
+                    x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
+
+                    # Vẽ bounding box
+                    cv2.rectangle(cv_img, (x1, y1), (x2, y2), (255, 0, 255), 3)
+
+                    # Tên lớp
+                    cls = int(best_box.cls[0])
+
+                    # Chi tiết vật thể
+                    org = [x1, y1]
+                    font = cv2.FONT_HERSHEY_SIMPLEX
+                    fontScale = 1
+                    color = (255, 0, 0)
+                    thickness = 2
+
+                    cv2.putText(cv_img, self.classNames[cls], org, font, fontScale, color, thickness)
                 qt_img = self.convert_cv_qt(cv_img)
-                results = self.model(file_name, conf=0.3, imgsz=640)
-                for obj in results:
-                    detected_objects.append(obj['label'])
 
                 self.ui.original_label.setPixmap(qt_img)
-                self.ph_nt_textEdit.setText("\n ".join(detected_objects))
-            except Exception as e:
-                QMessageBox.warning(self, "Cảnh báo", f"Đã xảy ra lỗi khi xử lý hình ảnh: {str(e)}")
+                self.ui.ph_nt_textEdit.setText("\n ".join(detected_objects))
+            # except Exception as e:
+            #     print(f"Cảnh báo", f"Đã xảy ra lỗi khi xử lý hình ảnh: {str(e)}")
+            #     QMessageBox.warning(self, "Cảnh báo", f"Đã xảy ra lỗi khi xử lý hình ảnh: {str(e)}")
         else:
             QMessageBox.warning(self, "Cảnh báo", "Không có hình ảnh nào được chọn.")
 
