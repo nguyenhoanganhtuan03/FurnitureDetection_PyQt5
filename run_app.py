@@ -27,7 +27,7 @@ class CaptureVideo(QThread):
         super().__init__()
 
     def run(self):
-        detected_objects = []
+        detected_objects_history = []  # Danh sách lưu trữ các vật đã nhận dạng từ các khung hình trước đó
         try:
             if self.file_path is not None:
                 self.cap = cv2.VideoCapture(self.file_path)
@@ -38,6 +38,7 @@ class CaptureVideo(QThread):
                 if ret:
                     results = self.model(img, stream=True)
                     best_boxes = []
+                    detected_objects = []
                     for r in results:
                         boxes = r.boxes
                         for box in boxes:
@@ -45,26 +46,29 @@ class CaptureVideo(QThread):
                             cls = int(box.cls[0])
                             if self.classNames[cls] in ['book', 'clock', 'curtain', 'painting', 'vase', 'tv']:
                                 best_boxes.append(box)
-                                detected_objects.append(self.classNames[cls])
-                        for best_box in best_boxes:
-                            x1, y1, x2, y2 = best_box.xyxy[0]
-                            x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
-                            cv2.rectangle(img, (x1, y1), (x2, y2), (255, 0, 255), 3)
-                            cls = int(best_box.cls[0])
-                            org = [x1, y1]
-                            font = cv2.FONT_HERSHEY_SIMPLEX
-                            fontScale = 1
-                            color = (255, 0, 0)
-                            thickness = 2
-                            cv2.putText(img, self.classNames[cls], org, font, fontScale, color, thickness)
+                                detected_objects.append(
+                                    self.classNames[cls])  # Thêm các vật nhận dạng được vào danh sách
+                    detected_objects_history.extend(detected_objects)
+                    for best_box in best_boxes:
+                        x1, y1, x2, y2 = best_box.xyxy[0]
+                        x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
+                        cv2.rectangle(img, (x1, y1), (x2, y2), (255, 0, 255), 3)
+                        cls = int(best_box.cls[0])
+                        org = [x1, y1]
+                        font = cv2.FONT_HERSHEY_SIMPLEX
+                        fontScale = 1
+                        color = (255, 0, 0)
+                        thickness = 2
+                        cv2.putText(img, self.classNames[cls], org, font, fontScale, color, thickness)
                     self.signal.emit(img)
+                    self.finished_signal.emit(detected_objects_history)
                 else:
                     break
         except Exception as e:
             print("Lỗi trong luồng chụp video:", e)
         finally:
-            if self.keep_running:
-                self.finished_signal.emit(detected_objects)
+            if self.keep_running and (self.file_path is not None or self.file_path is None):
+                self.finished_signal.emit(detected_objects_history)
 
     def stop(self):
         self.keep_running = False
@@ -94,15 +98,18 @@ class MainWindow(QMainWindow):
         self.ui.gy_nt_pushButton.clicked.connect(self.suggest_detected_objects)
 
     # Xử lý sự kiện khi cửa sổ đóng
-    def closeEvent(self, event):
-        self.stop_capture_video()
+    # def closeEvent(self, event):
+    #     self.stop_capture_video()
 
     # Dừng chụp video
     def stop_capture_video(self):
-        if self.thread:
-            self.thread.stop()
-            self.thread.wait()
-            self.thread = None
+        try:
+            if self.thread:
+                self.thread.stop()
+                self.thread.wait()
+                self.thread = None
+        except Exception as e:
+            print("Lỗi khi dừng chụp video:", e)
         return self.thread
 
     # Bắt đầu chụp video từ tệp đã chọn
@@ -250,6 +257,9 @@ class MainWindow(QMainWindow):
         self.ui.ttin_textEdit.clear()
         self.selected_image_file=''
         self.ui.ph_nt_textEdit.clear()
+        self.ui.enter_textEdit.clear()
+        self.ui.chat_bot_textEdit.clear()
+        self.ui.gy_nt_textEdit.clear()
 
     # Hàm hiển thị gợi ý
     def suggest_detected_objects(self, transactions):
