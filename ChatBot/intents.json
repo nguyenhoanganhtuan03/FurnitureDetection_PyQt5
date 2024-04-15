@@ -1,0 +1,70 @@
+{
+    "intents": [
+        {
+            "tag": "greeting",
+            "patterns": ["Xin chào", "Chào bạn", "Hello", "Hi", "Xin chào bạn"],
+            "responses": ["Xin chào! Bạn cần tôi giúp gì hôm nay?", "Chào bạn! Tôi sẵn lòng hỗ trợ bạn.", "Hello! Có điều gì tôi có thể giúp bạn không?"],
+            "context": [""]
+        },
+        {
+            "tag": "goodbye",
+            "patterns": ["Tạm biệt", "Chào tạm biệt", "Bye", "See you later"],
+            "responses": ["Tạm biệt! Hy vọng sẽ gặp lại bạn sớm!", "Chào tạm biệt! Hãy trở lại nếu bạn cần thêm sự giúp đỡ.", "Hẹn gặp lại bạn sau!"],
+            "context": [""]
+        },
+        {
+            "tag": "thanks",
+            "patterns": ["Cảm ơn", "Thanks", "Thank you", "Tks"],
+            "responses": ["Không có gì!", "Rất vui được giúp bạn!", "Chào bạn! Tôi sẵn lòng giúp bạn."],
+            "context": [""]
+        },
+        {
+            "tag": "noanswer",
+            "patterns": [],
+            "responses": ["Xin lỗi, tôi không hiểu bạn đang nói.", "Xin lỗi, tôi không thể hiểu bạn.", "Tôi không chắc mình hiểu bạn đúng không."],
+            "context": [""]
+        },
+        {
+            "tag": "options",
+            "patterns": ["Có gì bạn có thể làm?", "Bạn có thể giúp gì?", "Có thể tìm được gì?", "Bạn có thể hỗ trợ như thế nào?"],
+            "responses": ["Tôi có thể gợi ý cho bạn về các mặt hàng nội thất như sách, đồng hồ, rèm cửa, bức tranh, bình hoa, TV.", "Tôi có thể giúp bạn tìm kiếm các sản phẩm nội thất như sách, đồng hồ, rèm cửa, bức tranh, bình hoa, TV.", "Tôi có thể cung cấp gợi ý về nội thất như sách, đồng hồ, rèm cửa, bức tranh, bình hoa, TV."],
+            "context": [""]
+        },
+        {
+            "tag": "book",
+            "patterns": ["Sách", "Sách hay", "Đầu sách"],
+            "responses": ["Bạn có thể tìm sách hay tại https://www.book.com", "Danh sách sách phổ biến: https://www.book.com", "Tham khảo sách tại https://www.book.com"],
+            "context": [""]
+        },
+        {
+            "tag": "clock",
+            "patterns": ["Đồng hồ", "Đồng hồ treo tường", "Đồng hồ báo thức"],
+            "responses": ["Khám phá các loại đồng hồ tại https://www.clock.com", "Chọn lựa đồng hồ tại https://www.clock.com", "Đồng hồ mới nhất tại https://www.clock.com"],
+            "context": [""]
+        },
+        {
+            "tag": "curtain",
+            "patterns": ["Rèm cửa", "Rèm", "Màn cửa"],
+            "responses": ["Mua rèm cửa tại https://www.curtain.com", "Chọn mua rèm cửa tại https://www.curtain.com", "Bộ sưu tập rèm cửa tại https://www.curtain.com"],
+            "context": [""]
+        },
+        {
+            "tag": "painting",
+            "patterns": ["Bức tranh", "Tranh", "Bức tranh nghệ thuật"],
+            "responses": ["Khám phá các bức tranh tại https://www.painting.com", "Chọn lựa bức tranh tại https://www.painting.com", "Bộ sưu tập bức tranh tại https://www.painting.com"],
+            "context": [""]
+        },
+        {
+            "tag": "vase",
+            "patterns": ["Bình hoa", "Bình hoa trang trí", "Bình trang trí"],
+            "responses": ["Mua bình hoa tại https://www.vase.com", "Chọn mua bình hoa tại https://www.vase.com", "Bộ sưu tập bình hoa tại https://www.vase.com"],
+            "context": [""]
+        },
+        {
+            "tag": "tv",
+            "patterns": ["TV", "Television", "Tivi"],
+            "responses": ["Chọn mua TV tại https://www.tv.com", "Mua TV mới nhất tại https://www.tv.com", "Bộ sưu tập TV tại https://www.tv.com"],
+            "context": [""]
+        }
+   ]
+}

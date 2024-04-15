@@ -239,18 +239,18 @@ class Ui_MainWindow(object):
         self.chat_bot_textEdit.setGeometry(QtCore.QRect(0, 0, 981, 561))
         font = QtGui.QFont()
         font.setFamily("Times New Roman")
-        font.setPointSize(28)
+        font.setPointSize(22)
         self.chat_bot_textEdit.setFont(font)
         self.chat_bot_textEdit.setObjectName("chat_bot_textEdit")
         self.enter_textEdit = QtWidgets.QTextEdit(self.tab_2)
-        self.enter_textEdit.setGeometry(QtCore.QRect(10, 570, 861, 71))
+        self.enter_textEdit.setGeometry(QtCore.QRect(10, 570, 841, 71))
         font = QtGui.QFont()
         font.setFamily("Times New Roman")
         font.setPointSize(20)
         self.enter_textEdit.setFont(font)
         self.enter_textEdit.setObjectName("enter_textEdit")
         self.enter_pushButton = QtWidgets.QPushButton(self.tab_2)
-        self.enter_pushButton.setGeometry(QtCore.QRect(880, 570, 91, 71))
+        self.enter_pushButton.setGeometry(QtCore.QRect(860, 570, 111, 31))
         font = QtGui.QFont()
         font.setFamily("Times New Roman")
         font.setPointSize(16)
@@ -265,6 +265,22 @@ class Ui_MainWindow(object):
 "}\n"
 "")
         self.enter_pushButton.setObjectName("enter_pushButton")
+        self.delete_chat_pushButton = QtWidgets.QPushButton(self.tab_2)
+        self.delete_chat_pushButton.setGeometry(QtCore.QRect(860, 610, 111, 31))
+        font = QtGui.QFont()
+        font.setFamily("Times New Roman")
+        font.setPointSize(16)
+        self.delete_chat_pushButton.setFont(font)
+        self.delete_chat_pushButton.setStyleSheet("QPushButton {\n"
+"    background-color: rgb(255, 255, 255);\n"
+"    transition: background-color 0.3s, transform 0.3s;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"       background-color: rgb(149, 255, 110);\n"
+"}\n"
+"")
+        self.delete_chat_pushButton.setObjectName("delete_chat_pushButton")
         self.tabWidget.addTab(self.tab_2, "")
         self.label.raise_()
         self.widget.raise_()
@@ -300,6 +316,7 @@ class Ui_MainWindow(object):
         self.gy_nt_pushButton.setText(_translate("MainWindow", "Gợi ý nội thất"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("MainWindow", "Recognized file"))
         self.enter_pushButton.setText(_translate("MainWindow", "Enter"))
+        self.delete_chat_pushButton.setText(_translate("MainWindow", "Delete"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("MainWindow", "Chat Bot"))
 
 

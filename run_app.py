@@ -6,8 +6,10 @@ from ultralytics import YOLO
 from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog
 from PyQt5 import QtGui
 from PyQt5.QtCore import QThread, pyqtSignal, Qt, QFileInfo
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QPixmap, QKeyEvent
 from GUI_PyQt5.app_ui import Ui_MainWindow
+
+from ChatBot.chatgui import chatbot_response
 
 from mlxtend.frequent_patterns import apriori
 from apriori_nt import transactions
@@ -96,12 +98,14 @@ class MainWindow(QMainWindow):
         self.ui.stop_pushButton.clicked.connect(self.stop_capture_video)
         self.ui.clear_pushButton.clicked.connect(self.clear_ui)
         self.ui.gy_nt_pushButton.clicked.connect(self.suggest_detected_objects)
+        self.ui.delete_chat_pushButton.clicked.connect(self.delete_chat)
 
-    # Xử lý sự kiện khi cửa sổ đóng
-    # def closeEvent(self, event):
-    #     self.stop_capture_video()
+        # Kết nối sự kiện khi nhấn phím Enter trong enter_textEdit
+        self.ui.enter_textEdit.installEventFilter(self)
 
-    # Dừng chụp video
+        # Kết nối sự kiện khi nhấn nút enter_pushButton
+        self.ui.enter_pushButton.clicked.connect(self.send_message)
+
     def stop_capture_video(self):
         try:
             if self.thread:
@@ -261,11 +265,39 @@ class MainWindow(QMainWindow):
         self.ui.chat_bot_textEdit.clear()
         self.ui.gy_nt_textEdit.clear()
 
+    def delete_chat(self):
+        self.ui.chat_bot_textEdit.clear()
+
     # Hàm hiển thị gợi ý
     def suggest_detected_objects(self, transactions):
         frequent_itemsets = apriori(transactions, min_support=0.2, use_colnames=True)
         frequent_itemsets_str = frequent_itemsets.to_string()
         self.ui.gy_nt_textEdit.setPlainText(frequent_itemsets_str)
+
+    # Xử lý sự kiện khi nhấn phím Enter trong enter_textEdit hoặc nhấn nút enter_pushButton
+    def eventFilter(self, obj, event):
+        if obj is self.ui.enter_textEdit and event.type() == QKeyEvent.KeyPress and event.key() == Qt.Key_Return:
+            try:
+                self.send_message()
+            except Exception as e:
+                print("Error:", e)
+            return True
+        return super().eventFilter(obj, event)
+
+    # Gửi tin nhắn đến chatbot
+    def send_message(self):
+        try:
+            msg = self.ui.enter_textEdit.toPlainText().strip()
+            self.ui.enter_textEdit.clear()
+            if msg:
+                user_msg = "<img src='GUI_PyQt5/icon/user.jpg' width='50' height='50'>: " + msg.replace('\n', '<br>') + '<br>'
+                self.ui.chat_bot_textEdit.insertHtml(user_msg)
+
+                res = chatbot_response(msg)
+                bot_msg = "<img src='GUI_PyQt5/icon/chatbot.png' width='55' height='55'>: " + res.replace('\n', '<br>') + '<br>'
+                self.ui.chat_bot_textEdit.insertHtml(bot_msg)
+        except Exception as e:
+            print("Error:", e)
 
 
 if __name__ == "__main__":
