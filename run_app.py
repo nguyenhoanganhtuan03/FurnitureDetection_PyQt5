@@ -1,18 +1,23 @@
 import numpy as np
 import sys
 import cv2
+import pandas as pd
 from ultralytics import YOLO
 
 from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog
 from PyQt5 import QtGui
 from PyQt5.QtCore import QThread, pyqtSignal, Qt, QFileInfo
 from PyQt5.QtGui import QPixmap, QKeyEvent
+
+import apriori_nt
 from GUI_PyQt5.app_ui import Ui_MainWindow
 
 from ChatBot.chatgui import chatbot_response
 
 from mlxtend.frequent_patterns import apriori
 from apriori_nt import transactions
+
+transactions = apriori_nt.transactions
 
 class CaptureVideo(QThread):
     signal = pyqtSignal(np.ndarray)
@@ -102,7 +107,6 @@ class MainWindow(QMainWindow):
 
         # Kết nối sự kiện khi nhấn phím Enter trong enter_textEdit
         self.ui.enter_textEdit.installEventFilter(self)
-
         # Kết nối sự kiện khi nhấn nút enter_pushButton
         self.ui.enter_pushButton.clicked.connect(self.send_message)
 
@@ -268,12 +272,6 @@ class MainWindow(QMainWindow):
     def delete_chat(self):
         self.ui.chat_bot_textEdit.clear()
 
-    # Hàm hiển thị gợi ý
-    def suggest_detected_objects(self, transactions):
-        frequent_itemsets = apriori(transactions, min_support=0.2, use_colnames=True)
-        frequent_itemsets_str = frequent_itemsets.to_string()
-        self.ui.gy_nt_textEdit.setPlainText(frequent_itemsets_str)
-
     # Xử lý sự kiện khi nhấn phím Enter trong enter_textEdit hoặc nhấn nút enter_pushButton
     def eventFilter(self, obj, event):
         if obj is self.ui.enter_textEdit and event.type() == QKeyEvent.KeyPress and event.key() == Qt.Key_Return:
@@ -290,12 +288,33 @@ class MainWindow(QMainWindow):
             msg = self.ui.enter_textEdit.toPlainText().strip()
             self.ui.enter_textEdit.clear()
             if msg:
-                user_msg = "<img src='GUI_PyQt5/icon/user.jpg' width='50' height='50'>: " + msg.replace('\n', '<br>') + '<br>'
+                user_msg = "<img src='GUI_PyQt5/icon/user.jpg' width='50' height='50'>: " + msg.replace('\n','<br>') + '<br>'
                 self.ui.chat_bot_textEdit.insertHtml(user_msg)
 
                 res = chatbot_response(msg)
-                bot_msg = "<img src='GUI_PyQt5/icon/chatbot.png' width='55' height='55'>: " + res.replace('\n', '<br>') + '<br>'
+                bot_msg = "<img src='GUI_PyQt5/icon/chatbot.png' width='55' height='55'>: " + res.replace('\n','<br>') + '<br>'
                 self.ui.chat_bot_textEdit.insertHtml(bot_msg)
+        except Exception as e:
+            print("Error:", e)
+
+    # Hàm gợi ý
+    def suggest_detected_objects(self, transactions):
+        try:
+            # Chuyển đổi danh sách transactions thành DataFrame
+            df_transactions = pd.DataFrame(transactions)
+            # Tạo danh sách các đối tượng đã phát hiện
+            print(df_transactions)
+            detected_objects_list = list(self.detected_objects)
+            # Lọc các giao dịch chứa ít nhất một đối tượng đã phát hiện
+            filtered_transactions = df_transactions[
+                df_transactions.apply(lambda transaction: any(item in detected_objects_list for item in transaction),axis=1)]
+
+            # Áp dụng thuật toán Apriori trên các giao dịch đã lọc
+            frequent_itemsets = apriori(filtered_transactions, min_support=0.2, use_colnames=True)
+            # Chuyển kết quả thành chuỗi để hiển thị trên giao diện
+            frequent_itemsets_str = frequent_itemsets.to_string()
+            # Hiển thị kết quả trên giao diện
+            self.ui.gy_nt_textEdit.setPlainText(frequent_itemsets_str)
         except Exception as e:
             print("Error:", e)
 
