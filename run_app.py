@@ -13,7 +13,7 @@ from PyQt5.QtGui import QPixmap, QKeyEvent
 from GUI_PyQt5.app_ui import Ui_MainWindow
 from ChatBot.chatgui import chatbot_response
 
-from apriori_nt import main
+from apriori_nt import convert_transactions, find_frequent_itemsets
 
 
 class CaptureVideo(QThread):
@@ -296,11 +296,28 @@ class MainWindow(QMainWindow):
 
     # Hàm gợi ý
     def suggest_detected_objects(self, transactions):
-        min_support = 2
-        frequent_itemsets = find_frequent_itemsets(transactions, min_support)
-        for itemset in frequent_itemsets:
-            print(itemset)
-            self.ui.gy_nt_textEdit.setText(str(itemset))
+        try:
+            min_support = 2
+            frequent_itemsets = find_frequent_itemsets(transactions, min_support)
+            # Lấy tập các đồ vật đã phát hiện từ det_objs
+            det_objs = set(self.detected_objects)
+            # Khởi tạo tập gợi ý các đồ vật cần thiết
+            necessary_items = set()
+            # Lặp qua các itemset trong tập gợi ý
+            for itemset in frequent_itemsets['itemsets']:
+                # Kiểm tra xem các đồ vật trong itemset có trong det_objs hay không
+                for item in itemset:
+                    if item not in det_objs:
+                        # Nếu không có trong det_objs, thêm vào tập các đồ vật cần thiết
+                        necessary_items.add(item)
+            # Hiển thị các đồ vật cần thiết trong giao diện người dùng
+            print("Necessary Items:")
+            print(necessary_items)
+            self.ui.gy_nt_textEdit.setText(str(necessary_items))
+        except Exception as e:
+            # Xử lý ngoại lệ
+            print("An error occurred:", e)
+            # Ghi log hoặc thông báo lỗi cho người dùng nếu cần
 
 
 if __name__ == "__main__":
