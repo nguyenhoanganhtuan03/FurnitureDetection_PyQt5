@@ -1,51 +1,51 @@
-from itertools import combinations
+from mlxtend.frequent_patterns import apriori
+from mlxtend.frequent_patterns import association_rules
+import pandas as pd
 
-# def find_frequent_itemsets(transactions, min_support):
-#     # Tính tần suất xuất hiện của từng mặt hàng đơn lẻ
-#     item_counts = {}
-#     for transaction in transactions:
-#         for item in transaction:
-#             if item in item_counts:
-#                 item_counts[item] += 1
-#             else:
-#                 item_counts[item] = 1
-#
-#     # Lọc ra các mặt hàng có tần suất hỗ trợ lớn hơn hoặc bằng min_support
-#     frequent_items = {item for item, count in item_counts.items() if count >= min_support}
-#
-#     # Bắt đầu từ các tập itemset kích thước 2 trở lên và kiểm tra tần suất
-#     k = 2
-#     frequent_itemsets = {frozenset([item]) for item in frequent_items}
-#     while True:
-#         candidate_itemsets = set(combinations(frequent_items, k))
-#         frequent_itemsets_this_round = set()
-#         for itemset in candidate_itemsets:
-#             support_count = 0
-#             for transaction in transactions:
-#                 if set(itemset).issubset(transaction):
-#                     support_count += 1
-#             if support_count >= min_support:
-#                 frequent_itemsets_this_round.add(frozenset(itemset))
-#         if not frequent_itemsets_this_round:
-#             break
-#         frequent_itemsets.update(frequent_itemsets_this_round)
-#         k += 1
-#
-#     return frequent_itemsets
+def convert_transactions(transactions):
+    # Tạo một danh sách trống để lưu trữ giao dịch đã chuyển đổi
+    converted_transactions = []
 
+    # Lặp qua mỗi giao dịch
+    for transaction in transactions:
+        # Tạo một dict để lưu trữ sự xuất hiện của mỗi mặt hàng trong giao dịch
+        transaction_dict = {}
 
-transactions = [
-    {'book', 'clock', 'curtain'},
-    {'book', 'clock', 'tv'},
-    {'book', 'painting', 'vase'},
-    {'clock', 'curtain', 'painting'},
-    {'clock', 'tv'},
-    {'curtain', 'vase'},
-    {'painting', 'vase'},
-    {'painting', 'tv'},
-]
+        # Lặp qua mỗi mặt hàng và đánh dấu sự xuất hiện của mỗi mặt hàng trong giao dịch
+        for item in transaction:
+            transaction_dict[item] = 1
 
-# min_support = 2
-# frequent_itemsets = find_frequent_itemsets(transactions, min_support)
-# for itemset in frequent_itemsets:
-#     print(itemset)
+        # Thêm giao dịch đã chuyển đổi vào danh sách giao dịch đã chuyển đổi
+        converted_transactions.append(transaction_dict)
+
+    # Tạo DataFrame từ danh sách giao dịch đã chuyển đổi
+    df = pd.DataFrame(converted_transactions).fillna(0)
+
+    return df
+
+def main():
+    transactions = [{'book', 'clock', 'curtain'}, {'book', 'clock', 'tv'},
+                    {'book', 'painting', 'vase'}, {'clock', 'curtain', 'painting'},
+                    {'clock', 'tv'}, {'curtain', 'vase'},
+                    {'painting', 'vase'}, {'painting', 'tv'}]
+
+    additional_items = [{'lamp', 'rug'}, {'mirror', 'candle'}, {'chair', 'table'}, {'sofa', 'rug'}]
+
+    # Mở rộng giao dịch
+    extended_transactions = []
+    for transaction in transactions:
+        for new_items in additional_items:
+            extended_transactions.append(transaction | new_items)
+
+    # Chuyển đổi giao dịch thành định dạng DataFrame cho `mlxtend`
+    df = convert_transactions(extended_transactions)
+
+    # Tính toán tập phổ biến sử dụng thuật toán Apriori
+    frequent_itemsets = apriori(df, min_support=0.2, use_colnames=True)
+
+    # In các tập phổ biến
+    print("Frequent Itemsets with extended transactions:")
+    print(frequent_itemsets)
+
+if __name__ == "__main__":
+    main()
