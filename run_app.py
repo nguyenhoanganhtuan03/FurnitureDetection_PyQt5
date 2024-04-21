@@ -2,6 +2,7 @@ import numpy as np
 import sys
 import cv2
 from ultralytics import YOLO
+import traceback
 
 # Thư viện PyQt5
 from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog
@@ -9,11 +10,12 @@ from PyQt5 import QtGui
 from PyQt5.QtCore import QThread, pyqtSignal, Qt, QFileInfo
 from PyQt5.QtGui import QPixmap, QKeyEvent
 
+import apriori_nt
 # Các file cần thiết trong Project
 from GUI_PyQt5.app_ui import Ui_MainWindow
 from ChatBot.chatgui import chatbot_response
 
-from apriori_nt import convert_transactions, find_frequent_itemsets
+from apriori_nt import find_frequent_itemsets, extended_transactions, suggest_items
 
 
 class CaptureVideo(QThread):
@@ -90,6 +92,9 @@ class MainWindow(QMainWindow):
         self.model = YOLO("Model_Yolo/src_code/runs/detect/train/weights/best.pt")
         self.classNames = ['book', 'clock', 'curtain', 'painting', 'vase', 'tv']
         self.class_name_map = {'book': 'Sách', 'clock': 'Đồng hồ', 'curtain': 'Rèm', 'painting': 'Bức tranh', 'vase': 'Bình hoa', 'tv': 'TV'}
+        self.transactions = apriori_nt.transactions
+        self.additional_items = apriori_nt.additional_items
+        self.additional = apriori_nt.additional
 
         # Kết nối các sự kiện với các hàm tương ứng
         self.ui.ha_pushButton.clicked.connect(self.original_image)
@@ -295,29 +300,30 @@ class MainWindow(QMainWindow):
             print("Error:", e)
 
     # Hàm gợi ý
-    def suggest_detected_objects(self, transactions):
+    def suggest_detected_objects(self):
         try:
-            min_support = 2
-            frequent_itemsets = find_frequent_itemsets(transactions, min_support)
-            # Lấy tập các đồ vật đã phát hiện từ det_objs
-            det_objs = set(self.detected_objects)
-            # Khởi tạo tập gợi ý các đồ vật cần thiết
-            necessary_items = set()
-            # Lặp qua các itemset trong tập gợi ý
-            for itemset in frequent_itemsets['itemsets']:
-                # Kiểm tra xem các đồ vật trong itemset có trong det_objs hay không
-                for item in itemset:
-                    if item not in det_objs:
-                        # Nếu không có trong det_objs, thêm vào tập các đồ vật cần thiết
-                        necessary_items.add(item)
-            # Hiển thị các đồ vật cần thiết trong giao diện người dùng
-            print("Necessary Items:")
-            print(necessary_items)
-            self.ui.gy_nt_textEdit.setText(str(necessary_items))
+            # Tính toán tập phổ biến
+            frequent_itemsets = find_frequent_itemsets(extended_transactions(self.transactions, self.additional_items.values()), min_support=0.2)
+            translated_objects = [self.class_name_map.get(obj, obj) for obj in self.detected_objects]
+            input_items = set(translated_objects)
+            suggestions = suggest_items(input_items, frequent_itemsets)
+            translated_suggestions = []
+
+            for suggestion in suggestions:
+                translated_suggestion = []
+                for obj in suggestion:
+                    translated_obj = self.class_name_map.get(obj, obj)
+                    translated_obj_additional = self.additional_items.get(obj, obj)
+                    translated_suggestion.append(translated_obj if translated_obj != obj else translated_obj_additional)
+                translated_suggestions.append(translated_suggestion)
+            ht_suggestion = '\n'.join(', '.join(suggestion) for suggestion in translated_suggestions)
+
+            self.ui.gy_nt_textEdit.setPlainText(ht_suggestion)
+
         except Exception as e:
-            # Xử lý ngoại lệ
-            print("An error occurred:", e)
-            # Ghi log hoặc thông báo lỗi cho người dùng nếu cần
+            print("Error occurred:", e)
+            error_msg = traceback.format_exc()
+            print(error_msg)
 
 
 if __name__ == "__main__":
