@@ -303,7 +303,7 @@ class MainWindow(QMainWindow):
     def suggest_detected_objects(self):
         try:
             # Tính toán tập phổ biến
-            frequent_itemsets = find_frequent_itemsets(extended_transactions(self.transactions, self.additional_items.values()), min_support=0.2)
+            frequent_itemsets = find_frequent_itemsets(extended_transactions(self.transactions, self.additional_items), min_support=0.2)
             translated_objects = [self.class_name_map.get(obj, obj) for obj in self.detected_objects]
             input_items = set(translated_objects)
             suggestions = suggest_items(input_items, frequent_itemsets)
@@ -322,6 +322,7 @@ class MainWindow(QMainWindow):
 
         except Exception as e:
             print("Error occurred:", e)
+            # Sử dụng traceback để hiển thị dòng lỗi cụ thể
             error_msg = traceback.format_exc()
             print(error_msg)
 

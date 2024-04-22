@@ -7,10 +7,11 @@ def convert_transactions(transactions):
     for transaction in transactions:
         transaction_dict = {}
         for item in transaction:
-            transaction_dict[item] = 1
+            transaction_dict[item] = True
         converted_transactions.append(transaction_dict)
-    df = pd.DataFrame(converted_transactions).fillna(0)
+    df = pd.DataFrame(converted_transactions).fillna(False)
     return df
+
 
 def find_frequent_itemsets(transactions, min_support):
     # Tìm tập phổ biến sử dụng thuật toán Apriori
@@ -52,7 +53,7 @@ frequent_itemsets = find_frequent_itemsets(extended_transactions(transactions, a
 # # In các tập phổ biến
 # print("Các tập mục phổ biến với các giao dịch mở rộng:")
 # print(frequent_itemsets)
-
+#
 # # Gợi ý dựa trên các mặt hàng đã cho
 # input_items = {'book', 'clock'}
 # suggestions = suggest_items(input_items, frequent_itemsets)
