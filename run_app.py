@@ -91,9 +91,9 @@ class MainWindow(QMainWindow):
         self.thread = None
         self.model = YOLO("Model_Yolo/src_code/runs/detect/train/weights/best.pt")
         self.classNames = ['book', 'clock', 'curtain', 'painting', 'vase', 'tv']
-        self.class_name_map = {'book': 'Sách', 'clock': 'Đồng hồ', 'curtain': 'Rèm', 'painting': 'Bức tranh', 'vase': 'Bình hoa', 'tv': 'TV'}
+        self.class_name_map = {'book': 'Sách', 'clock': 'Đồng hồ', 'curtain': 'Rèm', 'painting': 'Bức tranh', 'vase': 'Bình hoa', 'tv': 'TV',
+                               'lamp':'Đèn', 'mirror':'Gương', 'candle':'Nến', 'chair':'Ghế', 'table':'Bàn', 'sofa':'Ghế Sofa', 'rug':'Tấm thảm'}
         self.transactions = apriori_nt.transactions
-        self.additional_items = apriori_nt.additional_items
         self.additional = apriori_nt.additional
 
         # Kết nối các sự kiện với các hàm tương ứng
@@ -303,26 +303,24 @@ class MainWindow(QMainWindow):
     def suggest_detected_objects(self):
         try:
             # Tính toán tập phổ biến
-            frequent_itemsets = find_frequent_itemsets(extended_transactions(self.transactions, self.additional_items), min_support=0.2)
-            translated_objects = [self.class_name_map.get(obj, obj) for obj in self.detected_objects]
-            input_items = set(translated_objects)
+            frequent_itemsets = find_frequent_itemsets(extended_transactions(self.transactions, self.additional), min_support=0.2)
+            input_items = set(self.detected_objects)
             suggestions = suggest_items(input_items, frequent_itemsets)
+            # Loại bỏ các từ không thể hiển thị
+            suggestions = [[word for word in suggestion if word in self.class_name_map] for suggestion in suggestions]
+            # Loại bỏ các gợi ý trùng lặp
+            unique_suggestions = [', '.join(suggestion) for suggestion in suggestions]
+            unique_suggestions = list(set(unique_suggestions))
+            # Dịch các gợi ý
             translated_suggestions = []
-
-            for suggestion in suggestions:
-                translated_suggestion = []
-                for obj in suggestion:
-                    translated_obj = self.class_name_map.get(obj, obj)
-                    translated_obj_additional = self.additional_items.get(obj, obj)
-                    translated_suggestion.append(translated_obj if translated_obj != obj else translated_obj_additional)
-                translated_suggestions.append(translated_suggestion)
-            ht_suggestion = '\n'.join(', '.join(suggestion) for suggestion in translated_suggestions)
-
-            self.ui.gy_nt_textEdit.setPlainText(ht_suggestion)
+            for suggestion in unique_suggestions:
+                translated_suggestion = [self.class_name_map.get(word, word) for word in suggestion.split(', ')]
+                translated_suggestions.append(', '.join(translated_suggestion))
+            # Hiển thị các gợi ý
+            self.ui.gy_nt_textEdit.setPlainText('\n'.join(translated_suggestions))
 
         except Exception as e:
             print("Error occurred:", e)
-            # Sử dụng traceback để hiển thị dòng lỗi cụ thể
             error_msg = traceback.format_exc()
             print(error_msg)
 

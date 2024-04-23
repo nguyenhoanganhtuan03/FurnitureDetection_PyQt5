@@ -9,9 +9,8 @@ def convert_transactions(transactions):
         for item in transaction:
             transaction_dict[item] = True
         converted_transactions.append(transaction_dict)
-    df = pd.DataFrame(converted_transactions).fillna(False)
+    df = pd.DataFrame(converted_transactions).infer_objects(copy=False).fillna(False)
     return df
-
 
 def find_frequent_itemsets(transactions, min_support):
     # Tìm tập phổ biến sử dụng thuật toán Apriori
@@ -19,12 +18,12 @@ def find_frequent_itemsets(transactions, min_support):
     frequent_itemsets = apriori(df, min_support=min_support, use_colnames=True)
     return frequent_itemsets
 
-def extended_transactions(transactions, additional_items):
-    # Mở rộng các giao dịch ban đầu bằng cách thêm các mục mới từ additional_items
+def extended_transactions(transactions, additional):
+    # Mở rộng các giao dịch ban đầu bằng cách thêm các mục mới từ additional
     extended_transactions = []
     for transaction in transactions:
-        for new_items in additional_items.values():  # Lặp qua các giá trị của từ điển
-            extended_transactions.append(transaction | set(new_items))
+        for new_items in additional:  # Lặp qua các tập hợp phụ thuộc
+            extended_transactions.append(transaction | new_items)
     return extended_transactions
 
 def suggest_items(input_items, frequent_itemsets):
@@ -44,18 +43,17 @@ transactions = [{'book', 'clock', 'curtain'}, {'book', 'clock', 'tv'},
                 {'clock', 'tv'}, {'curtain', 'vase'},
                 {'painting', 'vase'}, {'painting', 'tv'}]
 
-additional_items = {'lamp':'Đèn', 'rug': 'Tấm thảm', 'mirror': 'Gương', 'candle': 'Nến', 'chair': 'Ghế', 'table': 'Bàn', 'sofa': 'Ghế Sofa'}
 additional = [{'lamp', 'rug'}, {'mirror', 'candle'}, {'chair', 'table'}, {'sofa', 'rug'}]
 
 # Tính toán tập phổ biến sử dụng hàm find_frequent_itemsets
-frequent_itemsets = find_frequent_itemsets(extended_transactions(transactions, additional_items), min_support=0.2)
+frequent_itemsets = find_frequent_itemsets(extended_transactions(transactions, additional), min_support=0.2)
 
 # # In các tập phổ biến
 # print("Các tập mục phổ biến với các giao dịch mở rộng:")
 # print(frequent_itemsets)
 #
 # # Gợi ý dựa trên các mặt hàng đã cho
-# input_items = {'book', 'clock'}
+# input_items = {'book', 'clock', 'vase', 'tv'}
 # suggestions = suggest_items(input_items, frequent_itemsets)
 # print("Các gợi ý dựa trên các mặt hàng đã cho:")
 # for suggestion in suggestions:
