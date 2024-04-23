@@ -425,6 +425,12 @@ QPushButton:hover {
        <height>241</height>
       </rect>
      </property>
+     <property name="font">
+      <font>
+       <family>Times New Roman</family>
+       <pointsize>16</pointsize>
+      </font>
+     </property>
      <property name="styleSheet">
       <string notr="true">border-radius:0px;
 border: none;
