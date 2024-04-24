@@ -110,6 +110,7 @@ class MainWindow(QMainWindow):
         # Kết nối sự kiện khi nhấn nút enter_pushButton
         self.ui.enter_pushButton.clicked.connect(self.send_message)
 
+    # Hàm dừng video và camera
     def stop_capture_video(self):
         try:
             if self.thread:
@@ -120,7 +121,7 @@ class MainWindow(QMainWindow):
             print("Lỗi khi dừng chụp video:", e)
         return self.thread
 
-    # Bắt đầu chụp video từ tệp đã chọn
+    # Bắt đầu video từ tệp đã chọn
     def start_capture_video(self):
         if not self.stop_capture_video():
             file_path = self.video_or_camera()
@@ -130,7 +131,7 @@ class MainWindow(QMainWindow):
                 self.thread.signal.connect(self.show_webcam)
                 self.thread.finished_signal.connect(self.update_detected_objects_camera_video)
 
-    # Bắt đầu chụp video từ camera
+    # Khởi động camera
     def start_capture_camera(self):
         try:
             if not self.stop_capture_video():
@@ -166,6 +167,7 @@ class MainWindow(QMainWindow):
         else:
             return None
 
+    # Hảm xử lý các vật nhận dạng được từ video hoặc camera
     def update_detected_objects_camera_video(self, detected_objects):
         self.detected_objects = detected_objects
         translated_objects = [self.class_name_map.get(obj, obj) for obj in detected_objects]
@@ -173,6 +175,7 @@ class MainWindow(QMainWindow):
         detected_objects_str = '\n'.join(unique_objects)
         self.ui.ph_nt_textEdit.setPlainText(detected_objects_str)
 
+    # Hàm xử lý các vật nhận dạng được từ ảnh
     def update_detected_objects_images(self, detected_objects):
         self.detected_objects = detected_objects
         translated_objects = [self.class_name_map.get(obj, obj) for obj in detected_objects]
@@ -184,7 +187,7 @@ class MainWindow(QMainWindow):
             detected_objects_str += f"{obj}: {count}\n"
         self.ui.ph_nt_textEdit.setPlainText(detected_objects_str)
 
-    # Chọn hình ảnh từ máy tính
+    # Xử lý hình ảnh
     def identification_image(self):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
@@ -282,7 +285,7 @@ class MainWindow(QMainWindow):
             return True
         return super().eventFilter(obj, event)
 
-    # Gửi tin nhắn đến chatbot
+    # Gửi tin nhắn đến chatbot và trả về câu trả lời
     def send_message(self):
         try:
             msg = self.ui.enter_textEdit.toPlainText().strip()
@@ -297,7 +300,7 @@ class MainWindow(QMainWindow):
         except Exception as e:
             print("Error:", e)
 
-    # Hàm gợi ý
+    # Hàm gợi ý apriori
     def suggest_detected_objects(self):
         try:
             frequent_itemsets = find_frequent_itemsets(extended_transactions(self.transactions, self.additional), min_support=0.2)
