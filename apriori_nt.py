@@ -38,10 +38,27 @@ def suggest_items(input_items, frequent_itemsets):
     return suggestions
 
 
-transactions = [{'book', 'clock', 'curtain'}, {'book', 'clock', 'tv'},
-                {'book', 'painting', 'vase'}, {'clock', 'curtain', 'painting'},
-                {'clock', 'tv'}, {'curtain', 'vase'},
-                {'painting', 'vase'}, {'painting', 'tv'}]
+transactions = [
+    {'book', 'clock', 'curtain'},
+    {'book', 'clock', 'tv'},
+    {'book', 'painting', 'vase'},
+    {'clock', 'curtain', 'painting'},
+    {'book', 'clock', 'curtain'},
+    {'tv', 'painting', 'vase'},
+    {'tv', 'curtain', 'vase'},
+    {'book', 'curtain', 'vase'},
+    {'book', 'clock', 'vase'},
+    {'book', 'clock', 'tv', 'curtain'},
+    {'book', 'clock', 'tv', 'vase'},
+    {'tv', 'curtain', 'painting'},
+    {'book', 'tv', 'painting'},
+    {'book', 'clock', 'painting'},
+    {'book', 'curtain', 'painting'},
+    {'clock', 'tv'},
+    {'curtain', 'vase'},
+    {'painting', 'vase'},
+    {'painting', 'tv'}
+]
 
 additional = [{'lamp', 'rug'}, {'mirror', 'candle'}, {'chair', 'table'}, {'sofa', 'rug'}]
 
