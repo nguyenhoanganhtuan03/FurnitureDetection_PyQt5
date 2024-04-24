@@ -2,18 +2,19 @@ from mlxtend.frequent_patterns import apriori
 import pandas as pd
 
 def convert_transactions(transactions):
-    # Chuyển đổi danh sách giao dịch thành dạng DataFrame
+    # Chuyển đổi danh sách các giao dịch thành dạng DataFrame
     converted_transactions = []
     for transaction in transactions:
         transaction_dict = {}
         for item in transaction:
             transaction_dict[item] = True
         converted_transactions.append(transaction_dict)
+    # Chuyển đổi thành DataFrame và điền giá trị False cho các ô trống
     df = pd.DataFrame(converted_transactions).infer_objects(copy=False).fillna(False)
     return df
 
 def find_frequent_itemsets(transactions, min_support):
-    # Tìm tập phổ biến sử dụng thuật toán Apriori
+    # Tìm các tập mục phổ biến sử dụng thuật toán Apriori
     df = convert_transactions(transactions)
     frequent_itemsets = apriori(df, min_support=min_support, use_colnames=True)
     return frequent_itemsets
@@ -36,7 +37,6 @@ def suggest_items(input_items, frequent_itemsets):
             suggested_items = set(itemset['itemsets']) - input_items
             suggestions.append(suggested_items)
     return suggestions
-
 
 transactions = [
     {'book', 'clock', 'curtain'},

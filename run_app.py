@@ -11,13 +11,12 @@ from PyQt5.QtCore import QThread, pyqtSignal, Qt, QFileInfo
 from PyQt5.QtGui import QPixmap, QKeyEvent
 
 import apriori_nt
-# Các file cần thiết trong Project
 from GUI_PyQt5.app_ui import Ui_MainWindow
 from ChatBot.chatgui import chatbot_response
 
 from apriori_nt import find_frequent_itemsets, extended_transactions, suggest_items
 
-
+# Lớp chụp video
 class CaptureVideo(QThread):
     signal = pyqtSignal(np.ndarray)
     finished_signal = pyqtSignal(list)
@@ -52,7 +51,7 @@ class CaptureVideo(QThread):
                             if self.classNames[cls] in ['book', 'clock', 'curtain', 'painting', 'vase', 'tv']:
                                 best_boxes.append(box)
                                 detected_objects.append(
-                                    self.classNames[cls])  # Thêm các vật nhận dạng được vào danh sách
+                                    self.classNames[cls])
                     detected_objects_history.extend(detected_objects)
                     for best_box in best_boxes:
                         x1, y1, x2, y2 = best_box.xyxy[0]
@@ -79,7 +78,7 @@ class CaptureVideo(QThread):
         self.keep_running = False
         self.terminate()
 
-# Định nghĩa lớp MainWindow để quản lý giao diện chính
+# Lớp MainWindow quản lý giao diện chính
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -96,7 +95,7 @@ class MainWindow(QMainWindow):
         self.additional = apriori_nt.additional
 
         # Kết nối các nút với các hàm tương ứng
-        self.ui.ha_pushButton.clicked.connect(self.original_image)
+        self.ui.ha_pushButton.clicked.connect(self.identification_image)
         self.ui.ha_pushButton.clicked.connect(self.file_info)
         self.ui.video_pushButton.clicked.connect(self.start_capture_video)
         self.ui.video_pushButton.clicked.connect(self.file_info)
@@ -186,7 +185,7 @@ class MainWindow(QMainWindow):
         self.ui.ph_nt_textEdit.setPlainText(detected_objects_str)
 
     # Chọn hình ảnh từ máy tính
-    def original_image(self):
+    def identification_image(self):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         file_name, _ = QFileDialog.getOpenFileName(self, "Chọn hình ảnh", "", "Tệp hình ảnh (*.png *.jpg *.jpeg *.bmp)", options=options)
@@ -301,13 +300,10 @@ class MainWindow(QMainWindow):
     # Hàm gợi ý
     def suggest_detected_objects(self):
         try:
-            # Tính toán tập phổ biến
             frequent_itemsets = find_frequent_itemsets(extended_transactions(self.transactions, self.additional), min_support=0.2)
             input_items = set(self.detected_objects)
             suggestions = suggest_items(input_items, frequent_itemsets)
-            # Loại bỏ các từ không thể hiển thị
             suggestions = [[word for word in suggestion if word in self.class_name_map] for suggestion in suggestions]
-            # Loại bỏ các gợi ý trùng lặp
             unique_suggestions = [', '.join(suggestion) for suggestion in suggestions]
             unique_suggestions = list(set(unique_suggestions))
 
