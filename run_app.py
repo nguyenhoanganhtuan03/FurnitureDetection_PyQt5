@@ -303,17 +303,26 @@ class MainWindow(QMainWindow):
     # Hàm gợi ý apriori
     def suggest_detected_objects(self):
         try:
+            # Tìm tập phổ biến từ các giao dịch mở rộng
             frequent_itemsets = find_frequent_itemsets(extended_transactions(self.transactions, self.additional), min_support=0.2)
             input_items = set(self.detected_objects)
+
+            # Gợi ý các mục mới dựa trên các mục đã nhận dạng và tập phổ biến
             suggestions = suggest_items(input_items, frequent_itemsets)
             suggestions = [[word for word in suggestion if word in self.class_name_map] for suggestion in suggestions]
+
             unique_suggestions = [', '.join(suggestion) for suggestion in suggestions]
             unique_suggestions = list(set(unique_suggestions))
 
             translated_suggestions = []
             for suggestion in unique_suggestions:
                 translated_suggestion = [self.class_name_map.get(word, word) for word in suggestion.split(', ')]
-                translated_suggestions.append(', '.join(translated_suggestion))
+                # Lọc ra các từ không rỗng
+                non_empty_words = [word for word in translated_suggestion if word != '']
+                # Kiểm tra xem danh sách từ không rỗng có phần tử nào không
+                if non_empty_words:
+                    word_suggestion = ', '.join(non_empty_words)
+                    translated_suggestions.append(word_suggestion)
 
             self.ui.gy_nt_textEdit.setPlainText('\n'.join(translated_suggestions))
 
