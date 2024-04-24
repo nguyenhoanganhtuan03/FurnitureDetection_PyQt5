@@ -27,7 +27,7 @@ class CaptureVideo(QThread):
         self.cap = None
         self.model = YOLO("Model_Yolo/src_code/runs/detect/train/weights/best.pt")
         self.classNames = ['book', 'clock', 'curtain', 'painting', 'vase', 'tv']
-        self.class_name_map = {'book': 'Sách', 'clock': 'Đồng hồ', 'curtain': 'Rèm', 'painting': 'Bức tranh', 'vase': 'Bình hoa', 'tv': 'TV'}
+        # self.class_name_map = {'book': 'Sách', 'clock': 'Đồng hồ', 'curtain': 'Rèm', 'painting': 'Bức tranh', 'vase': 'Bình hoa', 'tv': 'TV'}
         self.main_window = main_window
         self.keep_running = True
         super().__init__()
@@ -311,12 +311,12 @@ class MainWindow(QMainWindow):
             # Loại bỏ các gợi ý trùng lặp
             unique_suggestions = [', '.join(suggestion) for suggestion in suggestions]
             unique_suggestions = list(set(unique_suggestions))
-            # Dịch các gợi ý
+
             translated_suggestions = []
             for suggestion in unique_suggestions:
                 translated_suggestion = [self.class_name_map.get(word, word) for word in suggestion.split(', ')]
                 translated_suggestions.append(', '.join(translated_suggestion))
-            # Hiển thị các gợi ý
+
             self.ui.gy_nt_textEdit.setPlainText('\n'.join(translated_suggestions))
 
         except Exception as e:
