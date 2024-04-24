@@ -27,13 +27,12 @@ class CaptureVideo(QThread):
         self.cap = None
         self.model = YOLO("Model_Yolo/src_code/runs/detect/train/weights/best.pt")
         self.classNames = ['book', 'clock', 'curtain', 'painting', 'vase', 'tv']
-        # self.class_name_map = {'book': 'Sách', 'clock': 'Đồng hồ', 'curtain': 'Rèm', 'painting': 'Bức tranh', 'vase': 'Bình hoa', 'tv': 'TV'}
         self.main_window = main_window
         self.keep_running = True
         super().__init__()
 
     def run(self):
-        detected_objects_history = []  # Danh sách lưu trữ các vật đã nhận dạng từ các khung hình trước đó
+        detected_objects_history = []
         try:
             if self.file_path is not None:
                 self.cap = cv2.VideoCapture(self.file_path)
@@ -96,7 +95,7 @@ class MainWindow(QMainWindow):
         self.transactions = apriori_nt.transactions
         self.additional = apriori_nt.additional
 
-        # Kết nối các sự kiện với các hàm tương ứng
+        # Kết nối các nút với các hàm tương ứng
         self.ui.ha_pushButton.clicked.connect(self.original_image)
         self.ui.ha_pushButton.clicked.connect(self.file_info)
         self.ui.video_pushButton.clicked.connect(self.start_capture_video)
