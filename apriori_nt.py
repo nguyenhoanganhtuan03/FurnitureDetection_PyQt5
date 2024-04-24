@@ -63,7 +63,7 @@ transactions = [
 additional = [{'lamp', 'rug'}, {'mirror', 'candle'}, {'chair', 'table'}, {'sofa', 'rug'}]
 
 # Tính toán tập phổ biến sử dụng hàm find_frequent_itemsets
-frequent_itemsets = find_frequent_itemsets(extended_transactions(transactions, additional), min_support=0.2)
+# frequent_itemsets = find_frequent_itemsets(extended_transactions(transactions, additional), min_support=0.2)
 
 # # In các tập phổ biến
 # print("Các tập mục phổ biến với các giao dịch mở rộng:")
