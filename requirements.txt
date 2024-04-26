@@ -3,7 +3,6 @@ pandas
 torch
 ultralytics
 PyQt5
-PyQt6
 nltk
 keras
 tensorflow
