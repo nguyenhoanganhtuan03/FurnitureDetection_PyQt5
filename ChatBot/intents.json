@@ -65,6 +65,48 @@
             "patterns": ["TV", "Television", "Tivi"],
             "responses": ["Chọn mua TV tại https://www.tv.com", "Mua TV mới nhất tại https://www.tv.com", "Bộ sưu tập TV tại https://www.tv.com"],
             "context": [""]
+        },
+        {
+            "tag": "lamp",
+            "patterns": ["Đèn", "Đèn trang trí", "Đèn bàn"],
+            "responses": ["Mua đèn trang trí tại https://www.lamp.com", "Chọn mua đèn bàn tại https://www.lamp.com", "Bộ sưu tập đèn trang trí tại https://www.lamp.com"],
+            "context": [""]
+        },
+        {
+            "tag": "mirror",
+            "patterns": ["Gương", "Gương trang trí"],
+            "responses": ["Mua gương trang trí tại https://www.mirror.com", "Chọn mua gương trang trí tại https://www.mirror.com", "Bộ sưu tập gương trang trí tại https://www.mirror.com"],
+            "context": [""]
+        },
+        {
+            "tag": "candle",
+            "patterns": ["Nến", "Nến trang trí"],
+            "responses": ["Mua nến trang trí tại https://www.candle.com", "Chọn mua nến trang trí tại https://www.candle.com", "Bộ sưu tập nến trang trí tại https://www.candle.com"],
+            "context": [""]
+        },
+        {
+            "tag": "chair",
+            "patterns": ["Ghế", "Ghế trang trí"],
+            "responses": ["Mua ghế trang trí tại https://www.chair.com", "Chọn mua ghế trang trí tại https://www.chair.com", "Bộ sưu tập ghế trang trí tại https://www.chair.com"],
+            "context": [""]
+        },
+        {
+            "tag": "table",
+            "patterns": ["Bàn", "Bàn trang trí"],
+            "responses": ["Mua bàn trang trí tại https://www.table.com", "Chọn mua bàn trang trí tại https://www.table.com", "Bộ sưu tập bàn trang trí tại https://www.table.com"],
+            "context": [""]
+        },
+        {
+            "tag": "sofa",
+            "patterns": ["Ghế sofa", "Sofa", "Ghế sofa trang trí"],
+            "responses": ["Mua ghế sofa trang trí tại https://www.sofa.com", "Chọn mua ghế sofa trang trí tại https://www.sofa.com", "Bộ sưu tập ghế sofa trang trí tại https://www.sofa.com"],
+            "context": [""]
+        },
+        {
+            "tag": "carpet",
+            "patterns": ["Thảm", "Tấm thảm", "Thảm trang trí"],
+            "responses": ["Mua tấm thảm trang trí tại https://www.carpet.com", "Chọn mua tấm thảm trang trí tại https://www.carpet.com", "Bộ sưu tập tấm thảm trang trí tại https://www.carpet.com"],
+            "context": [""]
         }
    ]
 }
